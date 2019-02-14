@@ -1,0 +1,6 @@
+[DEFAULT]
+username = username
+passwd = p@$w0rd
+smtp_host = mail.host.com
+port = 25
+use_tls = yes

@@ -1,5 +1,4 @@
 import sqlite3
-import smtplib
 import requests
 from bs4 import BeautifulSoup
 from cache_local import cache_local
