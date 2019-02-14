@@ -1,9 +1,13 @@
+import os
 import json
 from functools import wraps
 from hashlib import sha1
 
-CACHE_DIR = '_cache/'
 MAX_FILENAME_LENGTH = 40
+CACHE_DIR = os.path.join(os.path.dirname(__file__), '_cache')
+if not os.path.exists(CACHE_DIR):
+    os.makedirs(CACHE_DIR)
+
 
 class CacheNotFound(Exception):
     pass
