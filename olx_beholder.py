@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from collections import namedtuple
 import configparser
@@ -7,6 +8,8 @@ from pyhiccup.core import html
 from cache_local import cache_local
 from send_email import send_email_two_part
 
+
+DB_FILE = os.path.join(os.path.dirname(__file__), 'olx_beholder.db')
 
 config = configparser.ConfigParser()
 config.read('olx_beholder.ini')
@@ -79,7 +82,7 @@ def main():
     with open("urls.txt") as f:
         urls = [url for url in f if url]
 
-    with sqlite3.connect('olx_beholder.db') as conn:
+    with sqlite3.connect(DB_FILE) as conn:
         init_db(conn)
         for url in urls:
             results = get_results(url)
