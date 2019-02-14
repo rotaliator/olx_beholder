@@ -30,8 +30,9 @@ def insert_offer(conn, title, link, city, price):
         conn.execute("INSERT INTO offers VALUES (?, ?, ?, ?)",
                      (title, link, city, price))
         conn.commit()
-        print("new OFFER!")
-        offers_to_send.append(Offer(title, link, city, price))
+        offer = Offer(title, link, city, price)
+        offers_to_send.append(offer)
+        print("new OFFER!", offer)
     except sqlite3.IntegrityError:
         pass
 
@@ -58,15 +59,12 @@ def process_results(conn, content):
     soup = BeautifulSoup(content, 'html.parser')
     content = soup.find("div", "content")
     offers = content.find_all("div", "offer-wrapper")
-    print(f"Found {len(offers)} offers")
     for offer in offers:
         link_title = offer.h3.a
         title = link_title.strong.get_text().strip()
         link = link_title['href']
         city = offer.i.parent.get_text().strip()
         price = offer.find("p", "price").get_text().strip()
-        print(f"title: {title}\nlink: {link}")
-        print(city, price)
         insert_offer(conn, title, link, city, price)
 
 
@@ -90,7 +88,6 @@ def main():
     if offers_to_send:
         body_text = format_body_text(offers_to_send)
         body_html = format_body_html(offers_to_send)
-        print(body_text, "\n", body_html)
         send_email_two_part(receiver, sender, subject, body_text, body_html, bcc)
 
 
