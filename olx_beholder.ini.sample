@@ -7,6 +7,6 @@ use_tls = yes
 
 [Message]
 sender = sender@host.com
-receiver = reveiver@email.com
+receiver = receiver@email.com
 subject = New OLX offers! :)
 bcc = not.required@email.com
