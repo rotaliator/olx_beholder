@@ -4,17 +4,12 @@ from bs4 import BeautifulSoup
 from cache_local import cache_local
 
 
-conn = sqlite3.connect('olx_beholder.db')
+def init_db(conn):
+    conn.execute('''CREATE TABLE IF NOT EXISTS offers
+                    (title text, link text UNIQUE, city text, price text)''')
 
-conn.execute('''CREATE TABLE IF NOT EXISTS offers
-             (title text, link text UNIQUE, city text, price text)''')
 
-
-urls = [
-    "https://www.olx.pl/motoryzacja/samochody/honda/accord/?search%5Bfilter_float_price%3Afrom%5D=18000&search%5Bfilter_float_price%3Ato%5D=30000&search%5Bfilter_float_year%3Afrom%5D=2005&search%5Bfilter_enum_petrol%5D%5B0%5D=petrol&search%5Bfilter_enum_car_body%5D%5B0%5D=sedan&search%5Bfilter_enum_country_origin%5D%5B0%5D=pl",
-]
-
-def insert_offer(title, link, city, price):
+def insert_offer(conn, title, link, city, price):
     try:
         conn.execute("INSERT INTO offers VALUES (?, ?, ?, ?)",
                      (title, link, city, price))
@@ -23,7 +18,8 @@ def insert_offer(title, link, city, price):
     except sqlite3.IntegrityError:
         pass
 
-def process_results(content):
+
+def process_results(conn, content):
     soup = BeautifulSoup(content, 'html.parser')
     content = soup.find("div", "content")
     offers = content.find_all("div", "offer-wrapper")
@@ -36,7 +32,8 @@ def process_results(content):
         price = offer.find("p", "price").get_text().strip()
         print(f"title: {title}\nlink: {link}")
         print(city, price)
-        insert_offer(title, link, city, price)
+        insert_offer(conn, title, link, city, price)
+
 
 @cache_local
 def get_results(url):
@@ -46,11 +43,18 @@ def get_results(url):
     raise LookupError
 
 
-
 def main():
-    for url in urls:
-        results = get_results(url)
-        process_results(results)
+    urls = []
+    with open("urls.txt") as f:
+        for url in f:
+            if url:
+                urls.append(url)
+
+    with sqlite3.connect('olx_beholder.db') as conn:
+        init_db(conn)
+        for url in urls:
+            results = get_results(url)
+            process_results(conn, results)
 
 
 if __name__ == '__main__':
