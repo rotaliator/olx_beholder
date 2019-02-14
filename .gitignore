@@ -103,5 +103,5 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-#email config
-send_email.ini
+# config with smtp credentials
+olx_beholder.ini

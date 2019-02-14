@@ -1,0 +1,12 @@
+[Smtp]
+username = username
+passwd = p@$w0rd
+smtp_host = mail.host.com
+port = 25
+use_tls = yes
+
+[Message]
+sender = sender@host.com
+receiver = reveiver@email.com
+subject = New OLX offers! :)
+bcc = not.required@email.com
