@@ -70,7 +70,6 @@ def process_results(conn, content):
         insert_offer(conn, title, link, city, price)
 
 
-@cache_local
 def get_results(url):
     r = requests.get(url)
     if r.status_code == 200:
