@@ -31,7 +31,7 @@ def _save_result_to_file(fname, result):
         result = json.dumps(result, indent=4)
     if isinstance(result, bytes):
         mode = 'wb'
-    with open(CACHE_DIR + fname, mode) as f:
+    with open(os.path.join(CACHE_DIR, fname), mode) as f:
         f.write(result)
 
 
@@ -40,7 +40,7 @@ def _read_cache_from_file(fname):
     if fname.startswith('fullimage'):
         mode = 'rb'
     try:
-        with open(CACHE_DIR + fname, mode) as f:
+        with open(os.path.join(CACHE_DIR, fname), mode) as f:
             print(f"reading from cache: {fname}")
             result = f.read()
             if isinstance(result, str):
