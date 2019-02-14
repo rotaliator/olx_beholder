@@ -5,7 +5,6 @@ import configparser
 import requests
 from bs4 import BeautifulSoup
 from pyhiccup.core import html
-from cache_local import cache_local
 from send_email import send_email_two_part
 
 
