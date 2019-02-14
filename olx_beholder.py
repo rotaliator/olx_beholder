@@ -44,11 +44,8 @@ def get_results(url):
 
 
 def main():
-    urls = []
     with open("urls.txt") as f:
-        for url in f:
-            if url:
-                urls.append(url)
+        urls = [url for url in f if url]
 
     with sqlite3.connect('olx_beholder.db') as conn:
         init_db(conn)
