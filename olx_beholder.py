@@ -88,7 +88,8 @@ def main():
     if offers_to_send:
         body_text = format_body_text(offers_to_send)
         body_html = format_body_html(offers_to_send)
-        send_email_two_part(receiver, sender, subject, body_text, body_html, bcc)
+        subject_w_num = f"*{len(offers_to_send)}* {subject}"
+        send_email_two_part(receiver, sender, subject_w_num, body_text, body_html, bcc)
 
 
 if __name__ == '__main__':
