@@ -10,3 +10,7 @@ sender = sender@host.com
 receiver = receiver@email.com
 subject = New OLX offers! :)
 bcc = not.required@email.com
+
+[Files]
+database_file = olx_beholder.db
+urls_file = urls.txt

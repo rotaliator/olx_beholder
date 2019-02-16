@@ -2,24 +2,37 @@ import os
 import sqlite3
 from collections import namedtuple
 import configparser
+import argparse
 import requests
 from bs4 import BeautifulSoup
 from pyhiccup.core import html
 from send_email import send_email_two_part
 
+parser = argparse.ArgumentParser(
+    description='Simple watcher and email notifier for recent OLX offers ;)')
+parser.add_argument('--ini', dest='config_file', default="olx_beholder.ini",
+                    help='config file (default: olx_beholder.ini)')
+args = parser.parse_args()
 
-DB_FILE = os.path.join(os.path.dirname(__file__), 'olx_beholder.db')
 
 config = configparser.ConfigParser()
-config.read('olx_beholder.ini')
+try:
+    with open(args.config_file) as f:
+        config.read_file(f)
+except FileNotFoundError as e:
+    print(f"Error opening config file: {args.config_file}\n{e}")
+    exit(1)
+
 sender = config['Message']['sender']
 receiver = config['Message']['receiver']
 bcc = config['Message'].get('bcc', '')
-subject= config['Message']['subject']
+subject = config['Message']['subject']
+db_file = config['Files'].get('database_file', 'olx_beholder.db')
+urls_file = config['Files'].get('urls_file', 'urls.txt')
 
+DB_FULL_PATH = os.path.join(os.path.dirname(__file__), db_file)
 
 Offer = namedtuple("Offer", "title link city price")
-
 offers_to_send = []
 
 def init_db(conn):
@@ -56,7 +69,6 @@ def format_body_html(offers):
     body_html = body_html.replace('dir="rtl"', 'dir="ltr"')
     return body_html
 
-
 def process_results(conn, content):
     soup = BeautifulSoup(content, 'html.parser')
     content = soup.find("div", "content")
@@ -69,19 +81,21 @@ def process_results(conn, content):
         price = offer.find("p", "price").get_text().strip()
         insert_offer(conn, title, link, city, price)
 
-
 def get_results(url):
     r = requests.get(url)
     if r.status_code == 200:
         return r.content
     raise LookupError
 
-
 def main():
-    with open("urls.txt") as f:
-        urls = [url for url in f if url]
+    try:
+        with open(urls_file) as f:
+            urls = [url for url in f if url]
+    except FileNotFoundError as e:
+        print(f"Error opening urls file\n{e}")
+        exit(1)
 
-    with sqlite3.connect(DB_FILE) as conn:
+    with sqlite3.connect(DB_FULL_PATH) as conn:
         init_db(conn)
         for url in urls:
             results = get_results(url)
@@ -92,7 +106,6 @@ def main():
         body_html = format_body_html(offers_to_send)
         subject_w_num = f"*{len(offers_to_send)}* {subject}"
         send_email_two_part(receiver, sender, subject_w_num, body_text, body_html, bcc)
-
 
 if __name__ == '__main__':
     main()
