@@ -16,6 +16,17 @@ Go to [http://olx.pl](http://olx.pl), specify query filter, copy generated url a
 
 Run `python olx_beholder.py` in cron task.
 
+Config file can be pointed from command line (--ini)
+
+    $ python olx_beholder.py -h
+    usage: olx_beholder.py [-h] [--ini CONFIG_FILE]
+
+    Simple watcher and email notifier for recent OLX offers ;)
+
+    optional arguments:
+     -h, --help         show this help message and exit
+     --ini CONFIG_FILE  config file (default: olx_beholder.ini)
+
 
 ## License
 
