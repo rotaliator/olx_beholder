@@ -104,8 +104,12 @@ def main():
     if offers_to_send:
         body_text = format_body_text(offers_to_send)
         body_html = format_body_html(offers_to_send)
-        subject_w_num = f"*{len(offers_to_send)}* {subject}"
-        send_email_two_part(receiver, sender, subject_w_num, body_text, body_html, bcc)
+        if len(offers_to_send==0):
+            offer = offers_to_send[0]
+            mail_subject = f"*OLX* {offer.city}; {offer.price}; {offer.title}"
+        else:
+            mail_subject = f"*{len(offers_to_send)}* {subject}"
+        send_email_two_part(receiver, sender, mail_subject, body_text, body_html, bcc)
 
 if __name__ == '__main__':
     main()
