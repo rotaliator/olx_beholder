@@ -104,7 +104,7 @@ def main():
     if offers_to_send:
         body_text = format_body_text(offers_to_send)
         body_html = format_body_html(offers_to_send)
-        if len(offers_to_send==0):
+        if len(offers_to_send)==1:
             offer = offers_to_send[0]
             mail_subject = f"*OLX* {offer.city}; {offer.price}; {offer.title}"
         else:
